@@ -1,0 +1,11 @@
+common:
+    target:
+        - cortex-m7
+    includes:
+        - source/FlashOS.h
+    sources:
+        - source/st/STM32F7xx
+    macros:
+        - FLASH_MEM
+        - STM32F7x_2048
+        - FLASH_DRV_VERS=0

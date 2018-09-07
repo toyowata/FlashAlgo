@@ -148,3 +148,6 @@ projects:
     ncs36510:
         - *module_tools
         - records/projects/onsemi/ncs36510.yaml
+    stm32f7xx_2048:
+        - *module_tools
+        - records/projects/st/STM32F7xx_2048.yaml
