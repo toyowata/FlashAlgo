@@ -17,7 +17,7 @@
 #include "../FlashOS.H"        // FlashOS Structures
 
 // Memory Mapping Control
-#if defined(LPC11xx_32) || defined(LPC8xx_4) || defined(LPC11U68_256)
+#if defined(LPC11xx_32) || defined(LPC11xx_64) || defined(LPC8xx_4) || defined(LPC11U68_256)
 #define MEMMAP   (*((volatile unsigned long *) 0x40048000))
 #else
 #define MEMMAP   (*((volatile unsigned char *) 0x400FC040))
@@ -25,7 +25,7 @@
 
 #ifdef MBED
 
-#if defined(LPC11xx_32) || defined(LPC8xx_4) || defined(LPC11U68_256)
+#if defined(LPC11xx_32) || defined(LPC11xx_64) || defined(LPC8xx_4) || defined(LPC11U68_256)
 #define MAINCLKSEL (*((volatile unsigned long *) 0x40048070))
 #define MAINCLKUEN (*((volatile unsigned long *) 0x40048074))
 #define MAINCLKDIV (*((volatile unsigned long *) 0x40048078))
@@ -96,6 +96,9 @@
 #ifdef LPC11xx_32
 #define END_SECTOR     7
 #endif
+#ifdef LPC11xx_64
+#define END_SECTOR     15
+#endif
 #ifdef LPC8xx_4
 #define END_SECTOR     3
 #endif
@@ -121,9 +124,10 @@
 #define CRP3        (0x43218765)
 #define IS_CRP_VALUE(v) ((v==NO_ISP) || (v==CRP1) || (v==CRP2) || (v==CRP3))
 
-#if defined(LPC11xx_32) || defined(LPC8xx_4) || defined(LPC1549_256) || defined(LPC11U68_256)
+#if defined(LPC11xx_32) || defined(LPC11xx_64) || defined(LPC8xx_4) || defined(LPC1549_256) || defined(LPC11U68_256)
 #define NO_CRP      (0)
-#define _CCLK (12000)
+#define CCLK (12000)
+unsigned long _CCLK;           // CCLK in kHz
 #elif defined(LPC4337_1024)
 #define NO_CRP      (0)
 #define _CCLK (96000)
@@ -163,7 +167,7 @@ unsigned long GetSecNum (unsigned long adr) {
 
 #if defined(LPC8xx_4)
   n = adr >> 10;                               //  1kB Sector
-#elif defined(LPC11xx_32) || defined(LPC1549_256)
+#elif defined(LPC11xx_32) || defined(LPC11xx_64) || defined(LPC1549_256)
   n = adr >> 12;                               //  4kB Sector
 #elif defined(LPC11U68_256)
   n = adr >> 12;                               //  4kB Sector
@@ -201,7 +205,7 @@ unsigned long GetSecNum (unsigned long adr) {
 
 int Init (unsigned long adr, unsigned long clk, unsigned long fnc) {
 
-#if defined(LPC11xx_32) || defined(LPC8xx_4) || defined(LPC11U68_256)
+#if defined(LPC11xx_32) || defined(LPC11xx_64) || defined(LPC8xx_4) || defined(LPC11U68_256)
 
   MAINCLKSEL = 0;                              // Select Internal RC Oscillator
   MAINCLKUEN = 1;                              // Update Main Clock Source
@@ -307,7 +311,7 @@ int Init (unsigned long adr, unsigned long clk, unsigned long fnc) {
 
 int Init (unsigned long adr, unsigned long clk, unsigned long fnc) {
 
-  _CCLK     = 4000;                            // 4MHz Internal RC Oscillator
+  _CCLK     = CCLK;
 
   PLL0CON  = 0x00;                             // Disable PLL (use Oscillator)
   PLL0FEED = 0xAA;                             // Feed Sequence Part #1
@@ -337,7 +341,7 @@ int UnInit (unsigned long fnc) {
 
 int EraseChip (void) {
 
-#if defined(LPC11xx_32) || defined (LPC8xx_4)
+#if defined(LPC11xx_32) || defined(LPC11xx_64) || defined (LPC8xx_4)
 
   IAP.cmd    = 50;                             // Prepare Sector for Erase
   IAP.par[0] = 0;                              // Start Sector
@@ -517,7 +521,7 @@ int ProgramPage (unsigned long adr, unsigned long sz, unsigned char *buf) {
   IAP.cmd    = 51;                             // Copy RAM to Flash
   IAP.par[0] = adr;                            // Destination Flash Address
   IAP.par[1] = (unsigned long)buf;             // Source RAM Address
-#if defined(LPC11xx_32) || defined(LPC8xx_4) || defined(LPC1549_256) || defined(LPC11U68_256)
+#if defined(LPC11xx_32) || defined(LPC11xx_64) || defined(LPC8xx_4) || defined(LPC1549_256) || defined(LPC11U68_256)
   IAP.par[2] = 256;                            // Fixed Page Size
 #else
   IAP.par[2] = 512;                            // Fixed Page Size

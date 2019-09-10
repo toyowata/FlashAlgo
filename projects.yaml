@@ -123,6 +123,10 @@ projects:
         - *module_tools
         - records/projects/nxp/common/nxp_flash_driver.yaml
         - records/projects/nxp/targets/lpc1114fn28.yaml
+    lpc11u35:
+        - *module_tools
+        - records/projects/nxp/common/nxp_flash_driver.yaml
+        - records/projects/nxp/targets/lpc11u35.yaml
     lpc824:
         - *module_tools
         - records/projects/nxp/common/nxp_flash_driver.yaml

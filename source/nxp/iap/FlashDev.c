@@ -15,6 +15,7 @@
  */
 
 #include "../FlashOS.H"        // FlashOS Structures
+#define FLASH_DRV_VERS (0x0100+VERS)   // Driver Version, do not modify!
 
 #ifdef MBED
 #ifdef LPC1700_512
@@ -226,6 +227,25 @@ struct FlashDevice const FlashDevice  =  {
 
 // Specify Size and Address of Sectors
    0x001000, 0x000000,         // Sector Size  4kB (8 Sectors)
+   SECTOR_END
+};
+#endif
+
+#ifdef LPC11xx_64
+struct FlashDevice const FlashDevice  =  {
+   FLASH_DRV_VERS,             // Driver Version, do not modify!
+   "LPC11xx/122x/13xx IAP 64kB Flash", // Device Name
+   ONCHIP,                     // Device Type
+   0x00000000,                 // Device Start Address
+   0x00010000,                 // Device Size (64kB)
+   1024,                       // Programming Page Size
+   0,                          // Reserved, must be 0
+   0xFF,                       // Initial Content of Erased Memory
+   300,                        // Program Page Timeout 300 mSec
+   3000,                       // Erase Sector Timeout 3000 mSec
+
+// Specify Size and Address of Sectors
+   0x001000, 0x000000,         // Sector Size  4kB (16 Sectors)
    SECTOR_END
 };
 #endif
